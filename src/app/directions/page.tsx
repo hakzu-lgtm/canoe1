@@ -29,7 +29,7 @@ export default function DirectionsPage() {
           <div className="lg:col-span-2">
             <div className="overflow-hidden rounded-2xl border border-gray-200">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3195.5!2d127.9082!3d36.9544!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z7LaksKTroZzrj4Qg7Lap7KO87IucIOyepeyynOumrCA3OTEtMTA!5e0!3m2!1sko!2skr!4v1700000000000"
+                src="https://www.google.com/maps?q=%EC%9E%A5%EC%9E%90%EB%8A%AA+%EC%B9%B4%EB%88%84%EC%B2%B4%ED%97%98%EC%9E%A5&output=embed&hl=ko"
                 width="100%"
                 height="500"
                 style={{ border: 0 }}
