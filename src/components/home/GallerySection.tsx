@@ -66,7 +66,7 @@ export default function GallerySection() {
           {GALLERY_ITEMS.map((item) => (
             <div
               key={item.label}
-              className={`group relative overflow-hidden rounded-2xl ${item.span}`}
+              className={`group relative min-h-[240px] overflow-hidden rounded-2xl ${item.span}`}
             >
               <Image
                 src={item.src}
