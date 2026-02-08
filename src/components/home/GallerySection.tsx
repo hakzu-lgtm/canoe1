@@ -7,37 +7,37 @@ import Image from "next/image";
  */
 const GALLERY_ITEMS = [
   {
-    src: "/images/gallery-canoe.svg",
+    src: "/images/gallery-canoe.jpg",
     alt: "카누 체험 모습",
     label: "카누 체험",
     span: "md:col-span-2 md:row-span-2", // 큰 카드
   },
   {
-    src: "/images/gallery-waterway.svg",
+    src: "/images/gallery-waterway.jpg",
     alt: "장자늪 수로 풍경",
     label: "장자늪 수로",
     span: "",
   },
   {
-    src: "/images/gallery-safety.svg",
+    src: "/images/gallery-safety.jpg",
     alt: "안전 장비 착용 모습",
     label: "안전 장비",
     span: "",
   },
   {
-    src: "/images/gallery-group.svg",
+    src: "/images/gallery-group.jpg",
     alt: "단체 카누 체험 활동",
     label: "단체 체험",
     span: "",
   },
   {
-    src: "/images/gallery-drone.svg",
+    src: "/images/gallery-drone.jpg",
     alt: "드론으로 촬영한 수로 항공 뷰",
     label: "드론 항공샷",
     span: "",
   },
   {
-    src: "/images/gallery-bike.svg",
+    src: "/images/gallery-bike.jpg",
     alt: "자전거 대여 프로그램",
     label: "자전거 대여",
     span: "",

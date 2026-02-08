@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   SESSION_STATUS_MAP,
   WEATHER_STATUS_MAP,
@@ -9,12 +9,18 @@ import {
   type SessionStatus,
   type Reservation,
 } from "@/constants/mock-data";
+import type { StaffAvailability } from "@/contexts/StaffContext";
 import { StatusBadge } from "@/components/admin";
+import StaffAvailabilityIndicator from "./StaffAvailabilityIndicator";
 
 interface Props {
   session: CanoeSession | null;
   linkedReservations: Reservation[];
-  allGuides: readonly string[];
+  allGuides: string[];
+  guideAvailability?: Record<
+    string,
+    { availability: StaffAvailability; overlaps: CanoeSession[] }
+  >;
   onClose: () => void;
   onStatusChange: (sessionId: string, newStatus: SessionStatus) => void;
   onAddGuide: (sessionId: string, guide: string) => void;
@@ -25,11 +31,14 @@ export default function SessionDetailDrawer({
   session,
   linkedReservations,
   allGuides,
+  guideAvailability,
   onClose,
   onStatusChange,
   onAddGuide,
   onRemoveGuide,
 }: Props) {
+  const [confirmingGuide, setConfirmingGuide] = useState<string | null>(null);
+
   useEffect(() => {
     if (!session) return;
     function handleKey(e: KeyboardEvent) {
@@ -38,6 +47,10 @@ export default function SessionDetailDrawer({
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [session, onClose]);
+
+  useEffect(() => {
+    if (!session) setConfirmingGuide(null);
+  }, [session]);
 
   if (!session) return null;
 
@@ -53,6 +66,22 @@ export default function SessionDetailDrawer({
   const unassignedGuides = allGuides.filter(
     (g) => !session.assignedGuides.includes(g),
   );
+
+  function handleAddGuideClick(guide: string) {
+    const info = guideAvailability?.[guide];
+    if (info && info.availability === "on_shift_other_session") {
+      setConfirmingGuide(guide);
+      return;
+    }
+    onAddGuide(session!.id, guide);
+  }
+
+  function confirmAdd() {
+    if (confirmingGuide && session) {
+      onAddGuide(session.id, confirmingGuide);
+      setConfirmingGuide(null);
+    }
+  }
 
   return (
     <>
@@ -156,45 +185,107 @@ export default function SessionDetailDrawer({
             </p>
           </div>
 
-          {/* Guide management */}
+          {/* Guide management with availability */}
           <Section title="배정 가이드">
-            <div className="flex flex-wrap gap-1.5">
+            <div className="space-y-2">
               {session.assignedGuides.length === 0 && (
                 <p className="text-sm text-gray-400">배정된 가이드가 없습니다.</p>
               )}
-              {session.assignedGuides.map((g) => (
-                <span
-                  key={g}
-                  className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700"
-                >
-                  {g}
-                  <button
-                    type="button"
-                    onClick={() => onRemoveGuide(session.id, g)}
-                    className="ml-0.5 rounded-full p-1 hover:bg-emerald-100"
-                    aria-label={`${g} 제거`}
-                  >
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </span>
-              ))}
+              {session.assignedGuides.map((g) => {
+                const avail = guideAvailability?.[g];
+                return (
+                  <div key={g} className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700">
+                      {g}
+                      <button
+                        type="button"
+                        onClick={() => onRemoveGuide(session.id, g)}
+                        className="ml-0.5 rounded-full p-1 hover:bg-emerald-100"
+                        aria-label={`${g} 제거`}
+                      >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </span>
+                    {avail && avail.availability !== "available" && (
+                      <StaffAvailabilityIndicator
+                        availability={avail.availability}
+                        overlappingSessions={avail.overlaps}
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
+
+            {/* Unassigned guides with availability */}
             {unassignedGuides.length > 0 && (
-              <div className="mt-2">
-                <p className="mb-1 text-xs text-gray-400">가이드 추가</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {unassignedGuides.map((g) => (
-                    <button
-                      key={g}
-                      type="button"
-                      onClick={() => onAddGuide(session.id, g)}
-                      className="rounded-full border border-dashed border-gray-300 px-3 py-2 text-xs font-medium text-gray-500 transition-colors hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-700"
-                    >
-                      + {g}
-                    </button>
-                  ))}
+              <div className="mt-3">
+                <p className="mb-1.5 text-xs text-gray-400">가이드 추가</p>
+                <div className="space-y-2">
+                  {unassignedGuides.map((g) => {
+                    const avail = guideAvailability?.[g];
+                    const isUnavailable =
+                      avail &&
+                      (avail.availability === "absent" ||
+                        avail.availability === "off_duty" ||
+                        avail.availability === "off_shift");
+                    const hasOverlap =
+                      avail && avail.availability === "on_shift_other_session";
+
+                    return (
+                      <div key={g}>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleAddGuideClick(g)}
+                            disabled={!!isUnavailable}
+                            className={`rounded-full border border-dashed px-3 py-2 text-xs font-medium transition-colors ${
+                              isUnavailable
+                                ? "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-300"
+                                : hasOverlap
+                                  ? "border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                                  : "border-gray-300 text-gray-500 hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-700"
+                            }`}
+                          >
+                            + {g}
+                          </button>
+                          {avail && (
+                            <StaffAvailabilityIndicator
+                              availability={avail.availability}
+                              overlappingSessions={avail.overlaps}
+                            />
+                          )}
+                        </div>
+
+                        {/* Overlap confirmation */}
+                        {confirmingGuide === g && (
+                          <div className="mt-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2">
+                            <p className="text-xs text-amber-800">
+                              이 가이드는 같은 시간대 다른 세션에 배정되어 있습니다. 그래도 배정하시겠습니까?
+                            </p>
+                            <div className="mt-1.5 flex gap-2">
+                              <button
+                                type="button"
+                                onClick={confirmAdd}
+                                className="rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-700"
+                              >
+                                확인
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setConfirmingGuide(null)}
+                                className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200"
+                              >
+                                취소
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

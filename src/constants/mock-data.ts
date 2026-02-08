@@ -220,6 +220,109 @@ export const MOCK_MEDIA: MediaEquipment[] = [
 ];
 
 /* ================================================================
+   스태프 일정 관리
+   ================================================================ */
+
+export type StaffRole = "chief_guide" | "canoe_guide" | "support_staff";
+export type StaffStatus = "scheduled" | "on_duty" | "break" | "off_duty" | "absent";
+export type ShiftType = "full" | "morning" | "afternoon";
+
+export interface Staff {
+  id: string;
+  name: string;
+  role: StaffRole;
+  phone: string;
+}
+
+export interface StaffScheduleEntry {
+  id: string;
+  staffId: string;
+  date: string;
+  shift: ShiftType;
+  status: StaffStatus;
+}
+
+export const STAFF_ROLE_MAP: Record<
+  StaffRole,
+  { label: string; color: string; bg: string }
+> = {
+  chief_guide: { label: "수석 가이드", color: "text-emerald-700", bg: "bg-emerald-50" },
+  canoe_guide: { label: "카누 가이드", color: "text-blue-700", bg: "bg-blue-50" },
+  support_staff: { label: "지원 스태프", color: "text-violet-700", bg: "bg-violet-50" },
+};
+
+export const STAFF_STATUS_MAP: Record<
+  StaffStatus,
+  { label: string; color: string; bg: string }
+> = {
+  scheduled: { label: "배정", color: "text-gray-600", bg: "bg-gray-100" },
+  on_duty: { label: "근무 중", color: "text-emerald-700", bg: "bg-emerald-50" },
+  break: { label: "휴식", color: "text-amber-700", bg: "bg-amber-50" },
+  off_duty: { label: "퇴근", color: "text-gray-500", bg: "bg-gray-50" },
+  absent: { label: "결근", color: "text-red-600", bg: "bg-red-50" },
+};
+
+export const SHIFT_MAP: Record<
+  ShiftType,
+  { label: string; time: string }
+> = {
+  full: { label: "풀 근무", time: "09:00 - 18:00" },
+  morning: { label: "오전 근무", time: "09:00 - 13:00" },
+  afternoon: { label: "오후 근무", time: "13:00 - 18:00" },
+};
+
+export const STAFFING_RULES = {
+  minTotal: 4,
+  minByRole: {
+    chief_guide: 1,
+    canoe_guide: 2,
+    support_staff: 1,
+  } as Record<StaffRole, number>,
+} as const;
+
+export const MOCK_STAFF: Staff[] = [
+  { id: "STF-01", name: "권순호", role: "chief_guide", phone: "010-1111-0001" },
+  { id: "STF-02", name: "정상철", role: "canoe_guide", phone: "010-1111-0002" },
+  { id: "STF-03", name: "김용현", role: "canoe_guide", phone: "010-1111-0003" },
+  { id: "STF-04", name: "스태프A", role: "support_staff", phone: "010-1111-0004" },
+];
+
+export const SESSION_TIME_SHIFT_MAP: Record<string, ShiftType[]> = {
+  "09:00": ["full", "morning"],
+  "11:00": ["full", "morning"],
+  "13:30": ["full", "afternoon"],
+  "15:30": ["full", "afternoon"],
+};
+
+export const MOCK_STAFF_SCHEDULE: StaffScheduleEntry[] = [
+  // 3/27 (Thu)
+  { id: "SCH-01", staffId: "STF-01", date: "2026-03-27", shift: "full", status: "off_duty" },
+  { id: "SCH-02", staffId: "STF-02", date: "2026-03-27", shift: "full", status: "off_duty" },
+  { id: "SCH-03", staffId: "STF-03", date: "2026-03-27", shift: "full", status: "off_duty" },
+  { id: "SCH-04", staffId: "STF-04", date: "2026-03-27", shift: "full", status: "off_duty" },
+  // 3/28 (Fri) - main demo day
+  { id: "SCH-05", staffId: "STF-01", date: "2026-03-28", shift: "full", status: "on_duty" },
+  { id: "SCH-06", staffId: "STF-02", date: "2026-03-28", shift: "full", status: "on_duty" },
+  { id: "SCH-07", staffId: "STF-03", date: "2026-03-28", shift: "morning", status: "on_duty" },
+  { id: "SCH-08", staffId: "STF-04", date: "2026-03-28", shift: "full", status: "on_duty" },
+  // 3/29 (Sat)
+  { id: "SCH-09", staffId: "STF-01", date: "2026-03-29", shift: "full", status: "scheduled" },
+  { id: "SCH-10", staffId: "STF-02", date: "2026-03-29", shift: "full", status: "scheduled" },
+  { id: "SCH-11", staffId: "STF-03", date: "2026-03-29", shift: "afternoon", status: "scheduled" },
+  { id: "SCH-12", staffId: "STF-04", date: "2026-03-29", shift: "full", status: "scheduled" },
+  // 3/30 (Sun)
+  { id: "SCH-13", staffId: "STF-01", date: "2026-03-30", shift: "full", status: "scheduled" },
+  { id: "SCH-14", staffId: "STF-02", date: "2026-03-30", shift: "morning", status: "scheduled" },
+  { id: "SCH-15", staffId: "STF-03", date: "2026-03-30", shift: "full", status: "scheduled" },
+  { id: "SCH-16", staffId: "STF-04", date: "2026-03-30", shift: "full", status: "absent" },
+  // 3/31 (Mon)
+  { id: "SCH-17", staffId: "STF-01", date: "2026-03-31", shift: "full", status: "scheduled" },
+  { id: "SCH-18", staffId: "STF-02", date: "2026-03-31", shift: "full", status: "scheduled" },
+  { id: "SCH-19", staffId: "STF-03", date: "2026-03-31", shift: "full", status: "scheduled" },
+  { id: "SCH-20", staffId: "STF-04", date: "2026-03-31", shift: "full", status: "scheduled" },
+];
+
+/* ================================================================
    상태 변경 로그
    ================================================================ */
 

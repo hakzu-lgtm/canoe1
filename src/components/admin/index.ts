@@ -5,3 +5,8 @@ export { default as StatusSelect } from "./StatusSelect";
 export { default as CanoeSessionBoard } from "./CanoeSessionBoard";
 export { default as MediaEquipmentBoard } from "./MediaEquipmentBoard";
 export { default as StatusLogTable } from "./StatusLogTable";
+export { default as StaffScheduleBoard } from "./StaffScheduleBoard";
+export { default as StaffManagementBoard } from "./StaffManagementBoard";
+export { default as StaffMemberCard } from "./StaffMemberCard";
+export { default as StaffAvailabilityIndicator } from "./StaffAvailabilityIndicator";
+export { default as AdminAuthGuard } from "./AdminAuthGuard";

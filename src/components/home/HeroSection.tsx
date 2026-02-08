@@ -1,17 +1,18 @@
-import Image from "next/image";
 import Link from "next/link";
 
 export default function HeroSection() {
   return (
     <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden">
-      {/* 배경 이미지 - 실제 카누 수로 전경 사진으로 교체하세요 */}
-      <Image
-        src="/images/hero-canoe.svg"
-        alt="장자늪 카누 수로 전경"
-        fill
-        priority
-        className="object-cover"
-      />
+      {/* 배경 동영상 - public/videos/hero-canoe.mp4 */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        <source src="/videos/hero-canoe.mp4" type="video/mp4" />
+      </video>
 
       {/* 오버레이 */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />

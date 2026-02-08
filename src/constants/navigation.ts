@@ -20,6 +20,8 @@ export const ADMIN_NAV_ITEMS: NavItem[] = [
       { label: "카누 세션 관리", href: "/admin/canoe-sessions" },
       { label: "자전거 대여 관리", href: "/admin/bike-rental" },
       { label: "미디어 장비 관리", href: "/admin/media-equipment" },
+      { label: "스태프 관리", href: "/admin/staff-management" },
+      { label: "스태프 일정", href: "/admin/staff-scheduling" },
     ],
   },
 ];

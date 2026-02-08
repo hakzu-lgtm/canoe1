@@ -1,21 +1,32 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import {
-  MOCK_SESSIONS,
+  MOCK_STAFF,
   MOCK_RESERVATIONS,
-  type CanoeSession,
-  type SessionStatus,
 } from "@/constants/mock-data";
+import { useStaffContext } from "@/contexts/StaffContext";
 import SessionTimelineCard from "./SessionTimelineCard";
 import SessionDetailDrawer from "./SessionDetailDrawer";
 
-const ALL_GUIDES = ["가이드A", "가이드B", "가이드C"] as const;
-
 export default function CanoeSessionBoard() {
-  const [sessions, setSessions] = useState<CanoeSession[]>(MOCK_SESSIONS);
+  const {
+    sessions,
+    updateSessionStatus,
+    addGuideToSession,
+    removeGuideFromSession,
+    getStaffAvailability,
+    getOverlappingSessions,
+  } = useStaffContext();
+
   const [selectedDate, setSelectedDate] = useState<string>("2026-03-28");
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+
+  // Dynamic guide list from staff roster (non-support staff)
+  const allGuideNames = useMemo(
+    () => MOCK_STAFF.filter((s) => s.role !== "support_staff").map((s) => s.name),
+    [],
+  );
 
   // 날짜 목록 (동적)
   const availableDates = useMemo(
@@ -71,46 +82,21 @@ export default function CanoeSessionBoard() {
     ? sessions.find((s) => s.id === selectedSessionId) ?? null
     : null;
 
-  // 핸들러
-  const handleStatusChange = useCallback(
-    (sessionId: string, newStatus: SessionStatus) => {
-      setSessions((prev) =>
-        prev.map((s) =>
-          s.id === sessionId ? { ...s, status: newStatus } : s,
-        ),
-      );
-    },
-    [],
-  );
-
-  const handleAddGuide = useCallback(
-    (sessionId: string, guide: string) => {
-      setSessions((prev) =>
-        prev.map((s) =>
-          s.id === sessionId && !s.assignedGuides.includes(guide)
-            ? { ...s, assignedGuides: [...s.assignedGuides, guide] }
-            : s,
-        ),
-      );
-    },
-    [],
-  );
-
-  const handleRemoveGuide = useCallback(
-    (sessionId: string, guide: string) => {
-      setSessions((prev) =>
-        prev.map((s) =>
-          s.id === sessionId
-            ? {
-                ...s,
-                assignedGuides: s.assignedGuides.filter((g) => g !== guide),
-              }
-            : s,
-        ),
-      );
-    },
-    [],
-  );
+  // Guide availability for the selected session
+  const guideAvailability = useMemo(() => {
+    if (!selectedSession) return {};
+    const result: Record<
+      string,
+      { availability: ReturnType<typeof getStaffAvailability>; overlaps: ReturnType<typeof getOverlappingSessions> }
+    > = {};
+    for (const name of allGuideNames) {
+      result[name] = {
+        availability: getStaffAvailability(name, selectedSession.date, selectedSession.time),
+        overlaps: getOverlappingSessions(name, selectedSession.date, selectedSession.time),
+      };
+    }
+    return result;
+  }, [selectedSession, allGuideNames, getStaffAvailability, getOverlappingSessions]);
 
   return (
     <div className="space-y-6">
@@ -166,7 +152,7 @@ export default function CanoeSessionBoard() {
             session={session}
             isLast={i === dailySessions.length - 1}
             onCardClick={() => setSelectedSessionId(session.id)}
-            onStatusChange={handleStatusChange}
+            onStatusChange={updateSessionStatus}
           />
         ))}
         {dailySessions.length === 0 && (
@@ -180,11 +166,12 @@ export default function CanoeSessionBoard() {
       <SessionDetailDrawer
         session={selectedSession}
         linkedReservations={linkedReservations}
-        allGuides={ALL_GUIDES}
+        allGuides={allGuideNames}
+        guideAvailability={guideAvailability}
         onClose={() => setSelectedSessionId(null)}
-        onStatusChange={handleStatusChange}
-        onAddGuide={handleAddGuide}
-        onRemoveGuide={handleRemoveGuide}
+        onStatusChange={updateSessionStatus}
+        onAddGuide={addGuideToSession}
+        onRemoveGuide={removeGuideFromSession}
       />
     </div>
   );

@@ -1,8 +1,0 @@
-<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
-  <rect width="800" height="600" fill="#E87D3E" rx="12"/>
-  <!-- Life jacket shape -->
-  <path d="M350 220 Q400 180 450 220 L470 350 Q400 380 330 350 Z" fill="#FF6B35" opacity="0.8"/>
-  <rect x="375" y="260" width="50" height="8" fill="#333" rx="4" opacity="0.5"/>
-  <rect x="375" y="280" width="50" height="8" fill="#333" rx="4" opacity="0.5"/>
-  <text x="400" y="440" text-anchor="middle" fill="#fff" font-size="24" font-family="sans-serif" opacity="0.7">안전 장비 착용</text>
-</svg>

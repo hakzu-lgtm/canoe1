@@ -18,7 +18,7 @@ export default function AboutSection() {
           {/* 이미지 - 실제 수로 카누 체험 사진으로 교체하세요 */}
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
             <Image
-              src="/images/gallery-waterway.svg"
+              src="/images/gallery-waterway.jpg"
               alt="장자늪 수로를 따라 카누를 타는 모습"
               fill
               className="object-cover"
