@@ -23,6 +23,7 @@ export default function HeroSection() {
         muted
         playsInline
         preload="auto"
+        poster="/images/gallery-waterway.jpg"
         className="absolute inset-0 h-full w-full object-cover"
         src="/videos/hero-canoe.mp4"
       />
