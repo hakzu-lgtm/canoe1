@@ -71,6 +71,20 @@ export const BIKE_PRICING: PricingRow[] = [
 export const OPTION_PRICING: PricingRow[] = [
   {
     program: "옵션 서비스",
+    type: "드론 촬영",
+    duration: "체험 시간 동안",
+    price: "+5,000원",
+    notes: "홍보기간 중 무료",
+  },
+  {
+    program: "옵션 서비스",
+    type: "360 카메라 대여",
+    duration: "체험 시간 동안",
+    price: "+10,000원",
+    notes: "카누 이용 시",
+  },
+  {
+    program: "옵션 서비스",
     type: "모션캠 대여",
     duration: "체험 시간 동안",
     price: "+10,000원",

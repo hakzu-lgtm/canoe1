@@ -56,19 +56,41 @@ export default function ReservationForm() {
             </select>
           </FormField>
 
-          <FormField label="모션캠 대여 (+10,000원)" htmlFor="motion-cam">
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="motion-cam"
-                name="motionCam"
-                className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-              />
-              <span className="text-sm text-gray-600">
-                모션캠 대여를 추가합니다.
-              </span>
+          <div>
+            <p className="mb-3 text-sm font-medium text-gray-700">옵션 서비스</p>
+            <div className="space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="droneFilming"
+                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm text-gray-600">
+                  드론 촬영 (+5,000원) <span className="text-xs text-emerald-600 font-medium">홍보기간 중 무료</span>
+                </span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="camera360"
+                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm text-gray-600">
+                  360 카메라 대여 (+10,000원) <span className="text-xs text-gray-400">카누 이용 시</span>
+                </span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="motionCam"
+                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-sm text-gray-600">
+                  모션캠 대여 (+10,000원) <span className="text-xs text-gray-400">자전거/카누 이용 시</span>
+                </span>
+              </label>
             </div>
-          </FormField>
+          </div>
         </div>
       </fieldset>
 

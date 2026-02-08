@@ -18,24 +18,28 @@ export const metadata: Metadata = {
 function PricingTable({
   rows,
   accentColor = "emerald",
+  showDuration = false,
 }: {
   rows: PricingRow[];
   accentColor?: "emerald" | "gray";
+  showDuration?: boolean;
 }) {
   const headBg =
     accentColor === "emerald" ? "bg-emerald-600" : "bg-gray-700";
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[640px]" role="table">
+      <table className="w-full" role="table">
         <thead>
           <tr className={`${headBg} text-white`}>
             <th scope="col" className="px-5 py-4 text-left text-sm font-semibold">
               구분
             </th>
-            <th scope="col" className="px-5 py-4 text-left text-sm font-semibold">
-              이용시간
-            </th>
+            {showDuration && (
+              <th scope="col" className="px-5 py-4 text-left text-sm font-semibold">
+                이용시간
+              </th>
+            )}
             <th scope="col" className="px-5 py-4 text-right text-sm font-semibold">
               요금
             </th>
@@ -53,9 +57,11 @@ function PricingTable({
               <td className="px-5 py-4 text-sm font-medium text-gray-900">
                 {row.type}
               </td>
-              <td className="px-5 py-4 text-sm text-gray-500">
-                {row.duration}
-              </td>
+              {showDuration && (
+                <td className="px-5 py-4 text-sm text-gray-500">
+                  {row.duration}
+                </td>
+              )}
               <td className="px-5 py-4 text-right text-sm font-bold text-emerald-700">
                 {row.price}
               </td>
@@ -77,11 +83,13 @@ function SectionHeader({
   badge,
   badgeColor = "emerald",
   title,
+  titleSuffix,
   subtitle,
 }: {
   badge: string;
   badgeColor?: "emerald" | "gray";
   title: string;
+  titleSuffix?: string;
   subtitle: string;
 }) {
   const badgeCls =
@@ -95,7 +103,12 @@ function SectionHeader({
       >
         {badge}
       </span>
-      <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+      <h2 className="text-2xl font-bold text-gray-900">
+        {title}
+        {titleSuffix && (
+          <span className="ml-2 text-base font-medium text-gray-400">{titleSuffix}</span>
+        )}
+      </h2>
       <p className="mt-1 text-sm text-gray-500">{subtitle}</p>
     </div>
   );
@@ -119,27 +132,34 @@ export default function PricingPage() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8 md:py-24">
-        {/* ───── 1. 카누 체험 요금 ───── */}
-        <section className="mb-16" aria-labelledby="pricing-canoe">
-          <SectionHeader
-            badge="카누 체험"
-            title="카누 체험 요금"
-            subtitle="회당 약 2시간 / 수로 왕복 3.3km / 전문 가이드 동행 / 안전장비 포함"
-          />
-          <div className="overflow-hidden rounded-2xl border border-gray-200">
-            <PricingTable rows={CANOE_PRICING} />
-          </div>
-        </section>
+        {/* ───── 1. 카누 체험 + 자전거 대여 (좌우 배치) ───── */}
+        <section className="mb-16">
+          <div className="grid gap-8 lg:grid-cols-2">
+            {/* 카누 체험 요금 */}
+            <div>
+              <SectionHeader
+                badge="카누 체험"
+                title="카누 체험 요금"
+                titleSuffix="(이용시간 약 2시간)"
+                subtitle="수로 왕복 3.3km / 전문 가이드 동행 / 안전장비 포함"
+              />
+              <div className="overflow-hidden rounded-2xl border border-gray-200">
+                <PricingTable rows={CANOE_PRICING} />
+              </div>
+            </div>
 
-        {/* ───── 2. 자전거 대여 요금 ───── */}
-        <section className="mb-16" aria-labelledby="pricing-bike">
-          <SectionHeader
-            badge="자전거 대여"
-            title="자전거 대여 요금"
-            subtitle="카누 체험 후 연계 이용 또는 단독 이용 가능 / 헬멧 제공"
-          />
-          <div className="overflow-hidden rounded-2xl border border-gray-200">
-            <PricingTable rows={BIKE_PRICING} />
+            {/* 자전거 대여 요금 */}
+            <div>
+              <SectionHeader
+                badge="자전거 대여"
+                title="자전거 대여 요금"
+                titleSuffix="(이용시간 2시간)"
+                subtitle="카누 체험 후 연계 이용 또는 단독 이용 가능 / 헬멧 제공"
+              />
+              <div className="overflow-hidden rounded-2xl border border-gray-200">
+                <PricingTable rows={BIKE_PRICING} />
+              </div>
+            </div>
           </div>
         </section>
 
