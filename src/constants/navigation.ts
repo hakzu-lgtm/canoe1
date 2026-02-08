@@ -7,6 +7,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { label: "홈", href: "/" },
   { label: "프로그램", href: "/programs" },
+  { label: "찾아오는 길", href: "/directions" },
   { label: "이용요금", href: "/pricing" },
   { label: "예약하기", href: "/reservation" },
 ];
