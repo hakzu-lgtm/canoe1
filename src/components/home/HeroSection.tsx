@@ -1,18 +1,31 @@
+"use client";
+
+import { useRef, useEffect } from "react";
 import Link from "next/link";
 
 export default function HeroSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.currentTime = 0;
+    v.play().catch(() => {});
+  }, []);
+
   return (
     <section className="relative h-[85vh] min-h-[600px] w-full overflow-hidden">
       {/* 배경 동영상 - public/videos/hero-canoe.mp4 */}
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
+        preload="auto"
         className="absolute inset-0 h-full w-full object-cover"
-      >
-        <source src="/videos/hero-canoe.mp4" type="video/mp4" />
-      </video>
+        src="/videos/hero-canoe.mp4"
+      />
 
       {/* 오버레이 */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
